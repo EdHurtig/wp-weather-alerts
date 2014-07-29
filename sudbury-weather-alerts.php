@@ -10,6 +10,7 @@ Network: True
 */
 
 require_once 'classes/class-weather-alerts-core.php';
+require_once 'classes/class-point-in-polygon.php';
 
 if ( is_admin() ) {
 	require_once 'classes/class-weather-alerts-admin.php';
