@@ -9,13 +9,19 @@ Install
 
 1. Clone into your plugins directory and activate in the WordPress Admin UI.
 2. Click the link in the alert message that pops up in WordPress telling you that the Weather Alerts URL isn't set
-3. Find the ATOM feed for your area here: http://alerts.weather.gov/   ONLY USE THE ATOM FEED! Ii should look like this: http://alerts.weather.gov/cap/wwaatmget.php?x=MAC017&y=0
+3. Find the ATOM feed for your area here: http://alerts.weather.gov/  **use the ATOM feed** the url should look like this: http://alerts.weather.gov/cap/wwaatmget.php?x=MAC017&y=0
 4. Paste the ATOM feed url into the Admin Page
-5. fiddle with other settings to your content :-)
+5. Fiddle with other settings to your content :-)
 6. Done!
 
 P.S. Front End Support not available out of the box yet... You need to edit your theme and use 
-`$myalerts = apply_filters('alerts', array())` 
+
+
+```php
+$myalerts = apply_filters('alerts', array())
+```` 
+
+
 and then loop through the alerts and render them using something like what I have already for the Admin Notices
 
 
