@@ -63,7 +63,16 @@ class Weather_Alerts_Core {
 			'tornado warning',
 			'severe thunderstorm warning'
 		) ) );
-		$feed                = $this->get_xml_data( $weather_url );
+
+		$coordinates = apply_filters( 'weather_alerts_coordinates', get_option( 'weather_alerts_coordinates', array(
+			array( "42.437255", "-71.430091" ),
+			array( "42.412456", "-71.367254" ),
+			array( "42.402443", "-71.469564" ),
+			array( "42.352733", "-71.484842" ),
+			array( "42.341442", "-71.389913" ),
+		) ) );
+
+		$feed = $this->get_xml_data( $weather_url );
 
 		if ( is_wp_error( $feed ) ) {
 			return;
@@ -89,6 +98,30 @@ class Weather_Alerts_Core {
 					if ( false !== strpos( $title_lc, $search ) ) {
 						$show_alert = true;
 					}
+				}
+			}
+
+			if ( ! empty( $coordinates ) && $show_alert ) {
+				$pointfinder = new pointLocation();
+
+				$points = $alert->children( 'cap', true )->polygon;
+
+				// Split it into an array of arrays containing x-y pairs
+				$alert_polygon = array_map( function ( $point ) {
+					return explode( ',', $point );
+				}, explode( ' ', $points ) );
+
+				$inside = false;
+				foreach ( $coordinates as $coordinate ) {
+					if ( 'outside' !== $pointfinder->pointInPolygon( $coordinate, $alert_polygon ) ) {
+						$inside = true;
+
+						break;
+					}
+				}
+
+				if ( ! $inside ) {
+					$show_alert = false;
 				}
 			}
 
