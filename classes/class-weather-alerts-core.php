@@ -1,4 +1,6 @@
 <?php
+
+
 /**
  * Constantly pulls weather alerts from NOAA and will publish an Alert to the entire town site if there is a Severe weather warning for the Town
  *
@@ -26,9 +28,8 @@ class Weather_Alerts_Core {
 		}
 
 		if ( ! empty( $this->alerts ) ) {
-			// Generic Alerts Filter, You need to hook into this using apply_filters('alerts', array())
-			// TODO: Make front-end alerts work out of the box
-			add_filter( 'alerts', array( &$this, 'parse_alerts' ) );
+
+			add_filter( 'sudbury_alerts', array( &$this, 'parse_alerts' ) );
 		}
 
 		if ( get_site_option( 'weather_alerts_in_admin', true ) ) {
@@ -75,6 +76,9 @@ class Weather_Alerts_Core {
 		$feed = $this->get_xml_data( $weather_url );
 
 		if ( is_wp_error( $feed ) ) {
+			_sudbury_log( '[Error] Could not Retrieve weather data from NOAA: WP_Error' );
+			_sudbury_log( $feed );
+
 			return;
 		}
 
@@ -148,8 +152,8 @@ class Weather_Alerts_Core {
 			$cache_time = 10; // If there were recently weather alerts check NOAA every 10 seconds instead (6x faster than default)
 		}
 
-		if ( defined( 'WEATHER_ALERTS_CACHE_TIME' ) ) {
-			$cache_time = WEATHER_ALERTS_CACHE_TIME; // If there is an override in effect respect the override
+		if ( defined( 'SUDBURY_WEATHER_CACHE_TIME' ) ) {
+			$cache_time = SUDBURY_WEATHER_CACHE_TIME; // If there is an override in effect respect the override
 		}
 
 		set_transient( 'weather_alerts', $this->alerts, $cache_time );
@@ -171,6 +175,8 @@ class Weather_Alerts_Core {
 		}
 
 		$feed = new SimpleXMLElement( $response['body'] );
+
+		sudbury_log( 'Finished talking with NOAA, total time was ' . ( microtime( true ) - $start ) . ' seconds', array( 'echo' => false ) );
 
 		return $feed;
 	}
@@ -209,4 +215,4 @@ class Weather_Alerts_Core {
 }
 
 // KickStart the Weather Alerts Class
-$weather_alerts = new Weather_Alerts_Core();
+$sudbury_weather_alerts = new Weather_Alerts_Core();
