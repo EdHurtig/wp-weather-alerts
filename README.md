@@ -18,7 +18,7 @@ P.S. Front End Support not available out of the box yet... You need to edit your
 
 
 ```php
-$myalerts = apply_filters('alerts', array())
+$myalerts = apply_filters('alerts', array());
 ```` 
 
 
