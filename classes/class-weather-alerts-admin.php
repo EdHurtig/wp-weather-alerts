@@ -53,22 +53,25 @@ class Weather_Alerts_Admin {
 				<tr>
 					<th scope="row"><label for="weather_alerts_url">Weather Alerts Url (NWS Atom Feed)</label></th>
 					<td>
-						<input name="weather_alerts_url" type="text" id="weather_alerts_url" class="regular-text" value="<?php echo esc_attr( $weather_alerts_url ); ?>" style="width:35em;" />
+						<input name="weather_alerts_url" type="text" id="weather_alerts_url" class="regular-text"
+						       value="<?php echo esc_attr( $weather_alerts_url ); ?>" style="width:35em;"/>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="weather_alerts_url">Alerts Filter</label><br>
+					<th scope="row"><label for="weather_alerts_search_terms">Alerts Filter</label><br>
 						<i>(1 term per line)</i>
 					</th>
 					<td>
-						<textarea name="weather_alerts_search_terms" id="weather_alerts_search_terms" cols="45" rows="8"><?php echo esc_textarea( implode( "\n", $weather_alerts_search_terms ) ); ?></textarea><br>
+						<textarea name="weather_alerts_search_terms" id="weather_alerts_search_terms" cols="45"
+						          rows="8"><?php echo esc_textarea( implode( "\n", $weather_alerts_search_terms ) ); ?></textarea><br>
 						<i>We will show the alert if the title contains any of the terms (case-insensitive) </i>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="weather_alerts_url">Show Alerts in Admin</label></th>
+					<th scope="row"><label for="weather_alerts_in_admin">Show Alerts in Admin</label></th>
 					<td>
-						<input type="checkbox" name="weather_alerts_in_admin" id="weather_alerts_in_admin" <?php checked( $weather_alerts_in_admin ); ?>/>
+						<input type="checkbox" name="weather_alerts_in_admin"
+						       id="weather_alerts_in_admin" <?php checked( $weather_alerts_in_admin ); ?>/>
 					</td>
 				</tr>
 
