@@ -18,24 +18,26 @@ class Weather_Alerts_Core {
 
 	/**
 	 * The init function, will load data from cache or from NOAA if not cached
-	 *
 	 */
 	function init() {
 		add_action( 'wp_ajax_reload_weather_alerts', array( &$this, 'ajax' ) );
 		add_action( 'wp_ajax_nopriv_reload_weather_alerts', array( &$this, 'ajax' ) );
 		add_filter( 'nonce_user_logged_out', array( &$this, 'nonce_user_logged_out' ) );
 
+		// Load the alerts unless this is an AJAX request b/c we don't want to slow those down
 		if ( ! defined( 'DOING_AJAX' ) ) {
 			$this->load_alerts();
 		}
 
 		if ( $this->has_alerts() ) {
+			// Disable W3TC caching when in a weather alert situation
 			if ( ! defined( 'DONOTCACHEPAGE' ) ) {
 				define( 'DONOTCACHEPAGE', true );
 			}
 			add_filter( 'sudbury_alerts', array( &$this, 'parse_alerts' ) );
 		}
 
+		// If we should display weather alerts in the admin, then enqueue the notices
 		if ( get_site_option( 'weather_alerts_in_admin', true ) ) {
 			add_action( 'admin_notices', array( &$this, 'admin_notices' ) );
 			add_action( 'network_admin_notices', array( &$this, 'admin_notices' ) );
@@ -60,7 +62,6 @@ class Weather_Alerts_Core {
 
 			// We are really out of date must reload during this request
 			_sudbury_log( '[error] [weather-alerts] System is running a manual reload' );
-			//_sudbury_log( $this->reload() );
 		}
 
 	}
@@ -413,3 +414,35 @@ class Weather_Alerts_Core {
 
 // KickStart the Weather Alerts Class
 $sudbury_weather_alerts = new Weather_Alerts_Core();
+
+/**
+ * This function will add scaffolds for certain global functions that are part of the non-open source sudbury plugins
+ * so that you can use this plugin seamlessly, and Sudbury can use the same version without having to change it with every release
+ */
+function weather_alerts_sudbury_functions() {
+	if ( ! function_exists( 'sudbury_log' ) ) {
+		/**
+		 * Logs and echos the given message
+		 *
+		 * @param       $message
+		 * @param array $args
+		 */
+		function sudbury_log( $message, $args = array() ) {
+			_sudbury_log( $message, $args );
+			echo $message;
+		}
+	}
+	if ( ! function_exists( '_sudbury_log' ) ) {
+		/**
+		 * Only Logs the given message (silent to the end user)
+		 *
+		 * @param       $message
+		 * @param array $args
+		 */
+		function _sudbury_log( $message, $args = array() ) {
+			error_log( $message );
+		}
+	}
+}
+
+add_action( 'init', 'weather_alerts_sudbury_functions', 1 );
